@@ -1,0 +1,12 @@
+{
+  "name": "CCC",
+  "version": "0.0.1",
+  "description": "multiplayer card game",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "express": "^4.14.0",
+    "pug": "^2.0.0-beta6"
+  },
+  "license": "GPL-3.0",
+  "private": true
+}

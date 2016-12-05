@@ -1,0 +1,72 @@
+doctype html
+html
+    head
+        title= CCC
+        style.
+            .console {
+                font-family: monospace;
+                background: lightgray;
+                color: black;
+                width: 640px;
+                overflow: auto;
+            }
+            .console li {
+                list-style: none;
+            }
+            .console form {
+                height: 1em;
+            }
+            .console input {
+                border: 0px;
+                outline: none;
+                background: inherit;
+                font-family: inherit;
+                width: 600px;
+            }
+        script(src='/socket.io/socket.io.js')
+        script.
+            function cprint(msg) {
+                var li = document.createElement('li');
+                li.innerText = msg;
+                var hist = document.getElementById('history');
+                hist.appendChild(li);
+                hist.parentNode.scrollTop = hist.parentNode.scrollHeight;
+            }
+            var echo = true;
+            var sock = io.connect();
+            sock.on('console print', function (msg) {
+                cprint(msg);
+            });
+
+            function doclicmd(cmd) {
+                if (cmd == "@echo") echo = true;
+                else if (cmd == "@noecho") echo = false;
+            }
+
+            function docmd(cmd) {
+                if (cmd.length == 0) { return false; }
+                if (cmd[0] == "@") { doclicmd(cmd); return false; }
+
+                sock.emit('console enter', cmd);
+                if (echo) {
+                    cprint(">> " + cmd);
+                }
+                return false;
+            }
+    body
+        .console(style='width:640px;height:480px;')
+            ul#history
+
+        form#console_form.console
+            label # 
+            input#commandline(autocomplete='off',autofocus)
+
+        script.
+            document.getElementById('console_form')
+                .addEventListener('submit',
+                function (evt) {
+                    evt.preventDefault();
+                    var cmdline = document.getElementById('commandline');
+                    docmd(cmdline.value);
+                    cmdline.value = '';
+                });
